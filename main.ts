@@ -182,3 +182,34 @@ discord.registerEventHandler('MESSAGE_CREATE', async (msg) => {
   const newMessage = await msg.reply(`The Greek eagle!`);
   await newMessage.addReaction('🦅');
 });
+
+discord.registerEventHandler('MESSAGE_CREATE', async (msg) => {
+  if (msg.content === '?info') {
+    const embed = new discord.Embed();
+    embed.setTitle(msg.author.getTag()).setColor(0x00ff00);
+    embed.setDescription('User Information');
+    embed.setThumbnail({ url: msg.author.getAvatarUrl() });
+    embed.addField({
+      name: 'User ID',
+      value: msg.author.id,
+      inline: false
+    });
+    embed.setTimestamp(new Date().toISOString());
+    await msg.reply({ content: '', embed: embed });
+  }
+});
+
+discord.registerEventHandler('MESSAGE_CREATE', async (msg) => {
+  if (msg.content === '?catfact') {
+    // Request a random fact about cats
+    const req = await fetch('https://catfact.ninja/fact');
+
+    // Parse the request's JSON body:
+    const data = await req.json();
+    // Example data:
+    // { "fact": "Cats have supersonic hearing", "length": 28 }
+
+    // Reply to the command with the random cat fact
+    await msg.reply(data['fact']);
+  }
+});
